@@ -2,8 +2,13 @@
 name = "thermal-printer"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Louise Yousre <louiseyousre@outlook.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/louiseyousre200/thermal-printer/"
 
 [dependencies]
 iconv = "0.1.1"
+image = { version = "0.25.0", optional = true }
+
+[features]
+image = ["dep:image"]

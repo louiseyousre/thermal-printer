@@ -1,13 +1,13 @@
 use crate::pixel::{Pixel, DEFAULT_PIXEL};
 
-pub struct Image<'a> {
-    data: &'a [Pixel],
+pub struct Image {
+    data: Vec<Pixel>,
     width: u16,
     height: u16,
 }
 
-impl<'a> Image<'a> {
-    pub const fn new(data: &'a [Pixel], width: u16, height: u16) -> Self {
+impl Image {
+    pub const fn new(data: Vec<Pixel>, width: u16, height: u16) -> Self {
         Image {
             data,
             width,
@@ -59,5 +59,30 @@ impl<'a> Image<'a> {
             pixels.push(line);
         }
         pixels
+    }
+}
+
+#[cfg(feature = "image")]
+impl Into<Image> for ::image::DynamicImage {
+    fn into(self) -> Image {
+        // Convert the image to an RGBA image buffer
+        let rgba_img = self.to_rgba8();
+
+        // Get width and height of the image
+        let width = rgba_img.width();
+        let height = rgba_img.height();
+
+        // Extract pixel data
+        let mut pixels = Vec::new();
+        for y in 0..height {
+            for x in 0..width {
+                let pixel = rgba_img.get_pixel(x, y);
+                let rgba = pixel.0;
+                pixels.push(Pixel::new(rgba[0], rgba[1], rgba[2], rgba[3]));
+            }
+        }
+
+        // Create the image
+        Image::new(pixels, width as u16, height as u16)
     }
 }
